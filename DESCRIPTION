@@ -1,11 +1,14 @@
 Package: deep
 Type: Package
-Title: What the Package Does (Title Case)
+Title: A Neural Networks Framework
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Author: Brian Lee Mayer
+Maintainer: Brian <bleemayer@gmail.com>
+Description: This package provides a layer oriented way of creating neural networks,
+    the framework is intended to give the user total control of the internals of a net
+    without much effort. Use classes like PerceptronLayer to create a layer of percetron
+    neurons, and specify how many you want, that easy! The package does all the tricky
+    stuff internally leaving you focused in what you want.
+License: MIT
 Encoding: UTF-8
 LazyData: true
