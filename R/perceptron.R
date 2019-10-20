@@ -1,3 +1,29 @@
+#' The Perceptron neuron class, that implements the logic of the perceptron
+#' model.
+#'
+#' @field ws The matrix of weights that multiply the input vector, it can be a
+#' vector, a matrix or an array.
+#'
+#' @field bias The bias value.
+#'
+#' @method initialize This runs when you instantiate the class, either with
+#' \code{perceptron$new()} or \code{perceptron()}, the intent is to set up the
+#' create a new Perceptron neuron with given weights and bias.
+#'
+#' @method output Gives the output of passing data to the neuron.
+#' @param inputs The actual data to be fed to the neuron, this input's
+#' dimentions vary with the chosen weights dimentions.
+#' @return The computed value using the Perceptron model.
+#'
+#' @method train Runs the training algorithm to adjust the weights and bias of
+#' the neuron
+#' @param ins The list of vectors of inputs to the first layer in the network
+#' @param outs The list of vectors of outputs of the last layer in the network
+#' @param epochs How many rounds of training to run
+#' @param tax This is the learning rate, aka eta
+#' @param maxErr A contition to early stop the training process
+#' @return Vector of computed values of the same size of the last layer
+#'
 perceptron <- setRefClass(
     "Perceptron",
     fields = list(ws = "numeric", bias = "numeric"),
@@ -24,6 +50,33 @@ perceptron <- setRefClass(
     )
 )
 
+#' The PerceptronLayer class, that implements a layer of Perceptron neurons.
+#'
+#' @field n The number of neurons to create in the layer
+#'
+#' @field dims A vector of dimensions of the inputs to the layer
+#'
+#' @field neurons A list with the internal neurons
+#'
+#' @method initialize This runs when you instantiate the class, either with
+#' \code{perceptronLayer$new()} or \code{perceptronLayer()}, the intent is to
+#' set up the layer of \code{n} Perceptron neurons with random weights and
+#'  biases.
+#'
+#' @method output Gives the output of passing data to the layer.
+#' @param input The actual data to be fed to the layer, this input's
+#' dimentions vary with the chosen \code{n}.
+#' @return The computed value using the Perceptron model.
+#'
+#' @method train Runs the training algorithm to adjust the weights and bias of
+#' the neurons
+#' @param ins The list of vectors of inputs to the first layer in the network
+#' @param outs The list of vectors of outputs of the last layer in the network
+#' @param epochs How many rounds of training to run
+#' @param tax This is the learning rate, aka eta
+#' @param maxErr A contition to early stop the training process
+#' @return Vector of computed values of the same size of the last layer
+#'
 perceptronLayer <- setRefClass(
     "PerceptronLayer",
     fields = list(n = "numeric", dims = "vector", neurons = "vector"),
