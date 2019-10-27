@@ -17,25 +17,25 @@ NULL
 #'
 #' @examples
 #' # Create a dataset
-#' ds <- iris
-#' ds$Petal.Length <- NULL
-#' ds$Petal.Width <- NULL
-#' ds <- ds[ds$Species != "versicolor",]
-#' ds$Code <- as.integer(ds$Species == "virginica")
-#' ds <- ds[sample(nrow(ds)),]
+#' dataset <- iris
+#' dataset$Petal.Length <- NULL
+#' dataset$Petal.Width <- NULL
+#' dataset <- dataset[dataset$Species != "versicolor",]
+#' dataset$Code <- as.integer(dataset$Species == "virginica")
+#' dataset <- dataset[sample(nrow(dataset)),]
 #'
 #' # Create the network
 #' net <- neuralNet(2, perceptron(1))
 #'
 #' # Train the network, takes a while
-#' net$train(ds[,c(1,2)], ds$Code, epochs = 5000)
+#' net$train(dataset[,c(1,2)], dataset$Code, epochs = 5000)
 #'
 #' # Check the output
 #' net$output(c(1,2))
 #'
 #' # See accuracy
-#' ds$Calc <- sapply(1:nrow(ds), function(x) net$output(ds[x,c(1,2)]))
-#' length(which(ds$Code==ds$Calc))/nrow(ds)
+#' dataset$Calc <- sapply(1:nrow(dataset), function(x) net$output(dataset[x,c(1,2)]))
+#' length(which(dataset$Code==dataset$Calc))/nrow(dataset)
 #'
 neuralNet <- setRefClass(
     "NeuralNetwork",
@@ -87,6 +87,7 @@ neuralNet$methods(
     },
     train = function (ins, outs, epochs = 1, tax = .01, maxErr = 0) {
         nLayers <- length(layers)
+        r <- nrow(ins)
         for (e in 1:epochs) {
             # Initialize changes vector
             ch <- vector("list", nLayers)
@@ -109,7 +110,7 @@ neuralNet$methods(
                 }
             }
 
-            for (i in 1:nrow(ins)) {
+            for (i in 1:r) {
                 inputs <- vector("list", nLayers + 1)
                 inputs[[1]] <- ins[i,]
 
@@ -118,10 +119,10 @@ neuralNet$methods(
                     inputs[[l+1]] <- layers[[l]]$output(inputs[[l]])
                 }
                 cost <- outs[i,] - inputs[[nLayers+1]]
-                newErr <- cost
 
                 # Calculate weight changes
                 li <- nLayers
+                newErr <- cost
                 for (l in rev(layers)) {
                     err <- newErr
                     newErr <- vector("numeric", length(inputs[[li]]))
@@ -145,8 +146,10 @@ neuralNet$methods(
             for (l in layers) {
                 ni <- 1
                 for (neu in l$neurons) {
-                    neu$ws <- neu$ws + ch[[li]][[ni]]$ws
-                    neu$bias <- neu$bias + ch[[li]][[ni]]$b
+                    wsChange <- ch[[li]][[ni]]$ws/r
+                    bChange <- ch[[li]][[ni]]$b/r
+                    neu$ws <- neu$ws + unlist(wsChange, use.names = F)
+                    neu$bias <- neu$bias + unlist(bChange, use.names = F)
                     ni <- ni + 1
                 }
                 li <- li + 1
