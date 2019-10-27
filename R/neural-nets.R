@@ -17,25 +17,25 @@ NULL
 #'
 #' @examples
 #' # Create a dataset
-#' dataset <- iris
-#' dataset$Petal.Length <- NULL
-#' dataset$Petal.Width <- NULL
-#' dataset <- dataset[dataset$Species != "versicolor",]
-#' dataset$Code <- as.integer(dataset$Species == "virginica")
-#' dataset <- dataset[sample(nrow(dataset)),]
+#' ds <- iris
+#' ds$Petal.Length <- NULL
+#' ds$Petal.Width <- NULL
+#' ds <- ds[ds$Species != "versicolor",]
+#' ds$Code <- as.integer(ds$Species == "virginica")
+#' ds <- ds[sample(nrow(ds)),]
 #'
 #' # Create the network
 #' net <- neuralNet(2, perceptron(1))
 #'
 #' # Train the network, takes a while
-#' net$train(dataset[,c(1,2)], dataset$Code, epochs = 5000)
+#' net$train(ds[,c(1,2)], ds$Code, epochs = 5000)
 #'
 #' # Check the output
 #' net$output(c(1,2))
 #'
 #' # See accuracy
-#' dataset$Calc <- sapply(1:nrow(dataset), function(x) net$output(dataset[x,c(1,2)]))
-#' length(which(dataset$Code==dataset$Calc))/nrow(dataset)
+#' ds$Calc <- sapply(1:nrow(ds), function(x) net$output(ds[x,c(1,2)]))
+#' length(which(ds$Code==ds$Calc))/nrow(ds)
 #'
 neuralNet <- setRefClass(
     "NeuralNetwork",
@@ -67,15 +67,15 @@ neuralNet$methods(
         for (i in 1:...length()) {
             l <- ...elt(i)
             switch (class(l),
-                "PerceptronLayer" = {
-                    layers[[i]] <<- perceptronLayer(l$n, input)
-                    input <- l$n
-                },
-                "McCullochPittsLayer" = {
-                    layers[[i]] <<- mcCullochPittsLayer(l$n, input)
-                    input <- l$n
-                },
-                stop("argument in ... is not a layer!")
+                    "PerceptronLayer" = {
+                        layers[[i]] <<- perceptronLayer(l$n, input)
+                        input <- l$n
+                    },
+                    "McCullochPittsLayer" = {
+                        layers[[i]] <<- mcCullochPittsLayer(l$n, input)
+                        input <- l$n
+                    },
+                    stop("argument in ... is not a layer!")
             )
         }
     },
@@ -89,21 +89,21 @@ neuralNet$methods(
         nLayers <- length(layers)
         for (e in 1:epochs) {
             # Initialize changes vector
-            changes <- vector("list", nLayers)
-            changes[[1]] <- vector("list", layers[[1]]$n)
+            ch <- vector("list", nLayers)
+            ch[[1]] <- vector("list", layers[[1]]$n)
             for (neu in 1:layers[[1]]$n) {
-                changes[[1]][[neu]] <- list(
+                ch[[1]][[neu]] <- list(
                     "ws" = vector("numeric", length(ins[1,])),
-                    "bias" = vector("numeric", 1)
+                    "b" = vector("numeric", 1)
                 )
             }
             if (nLayers > 1) {
                 for (l in 2:nLayers) {
-                    changes[[l]] <- vector("list", layers[[l]]$n)
+                    ch[[l]] <- vector("list", layers[[l]]$n)
                     for (ne in 1:layers[[l]]$n) {
-                        changes[[l]][[ne]] <- list(
+                        ch[[l]][[ne]] <- list(
                             "ws" = vector("numeric", layers[[l-1]]$n),
-                            "bias" = vector("numeric", 1)
+                            "b" = vector("numeric", 1)
                         )
                     }
                 }
@@ -121,29 +121,36 @@ neuralNet$methods(
                 newErr <- cost
 
                 # Calculate weight changes
-                for (l in nLayers:1) {
+                li <- nLayers
+                for (l in rev(layers)) {
                     err <- newErr
-                    newErr <- vector("numeric", length(inputs[[l]]))
-                    for (ne in 1:layers[[l]]$n) {
-                        d <- layers[[l]]$neurons[[ne]]$ws*inputs[[l]]*err[[ne]]*tax
-                        db <- err[[ne]]*tax
+                    newErr <- vector("numeric", length(inputs[[li]]))
+                    ni <- 1
+                    for (neu in l$neurons) {
+                        d <- neu$ws*inputs[[li]]*err[[ni]]*tax
+                        db <- err[[ni]]*tax
 
-                        changes[[l]][[ne]][["ws"]] <- changes[[l]][[ne]][["ws"]] + d
-                        changes[[l]][[ne]][["bias"]] <- changes[[l]][[ne]][["bias"]] + db
+                        ch[[li]][[ni]][["ws"]] <- ch[[li]][[ni]][["ws"]] + d
+                        ch[[li]][[ni]][["b"]] <- ch[[li]][[ni]][["b"]] + db
 
-                        newErr <- newErr + err*layers[[l]]$neurons[[ne]]$ws
+                        newErr <- newErr + err*neu$ws
+                        ni <- ni + 1
                     }
+                    li <- li - 1
                 }
             }
 
             # Average changes and apply
-            for (l in 1:nLayers) {
-                for (ne in 1:layers[[l]]$n) {
-                    layers[[l]]$neurons[[ne]]$ws <<- layers[[l]]$neurons[[ne]]$ws + changes[[l]][[ne]]$ws
-                    layers[[l]]$neurons[[ne]]$bias <<- layers[[l]]$neurons[[ne]]$bias + changes[[l]][[ne]]$bias
+            li <- 1
+            for (l in layers) {
+                ni <- 1
+                for (neu in l$neurons) {
+                    neu$ws <- neu$ws + ch[[li]][[ni]]$ws
+                    neu$bias <- neu$bias + ch[[li]][[ni]]$b
+                    ni <- ni + 1
                 }
+                li <- li + 1
             }
         }
     }
 )
-
