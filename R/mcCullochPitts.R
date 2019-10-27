@@ -24,6 +24,28 @@
 #' @param maxErr A contition to early stop the training process
 #' @return Vector of computed values of the same size of the last layer
 #'
+#' @examples
+#' # Create a dataset
+#' dataset <- iris
+#' dataset$Petal.Length <- NULL
+#' dataset$Petal.Width <- NULL
+#' dataset <- dataset[dataset$Species != "versicolor",]
+#' dataset$Code <- as.integer(dataset$Species == "virginica")
+#' dataset <- dataset[sample(nrow(dataset)),]
+#'
+#' # Create the neuron
+#' neuron <- mcCullochPitts(c(1,1), 1)
+#'
+#' # Train the neuron, takes a while
+#' neuron$train(dataset[,c(1,2)], dataset$Code, epochs = 500)
+#'
+#' # Check the output
+#' neuron$output(c(1,2))
+#'
+#' # See accuracy
+#' dataset$Calc <- sapply(1:nrow(dataset), function(x) neuron$output(dataset[x,c(1,2)]))
+#' length(which(dataset$Code==dataset$Calc))/nrow(dataset)
+#'
 mcCullochPitts <- setRefClass(
     "McCullochPitts",
     fields = list(ws = "numeric", bias = "numeric"),
@@ -33,7 +55,7 @@ mcCullochPitts <- setRefClass(
             bias <<- bias
         },
         output = function(inputs) {
-            sum(ws*inputs) + bias
+            sum(ws*inputs) - bias
         },
         train = function(ins, out, epochs = 1, tax = .01, maxErr = 0) {
             repeat {
