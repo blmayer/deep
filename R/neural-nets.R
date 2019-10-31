@@ -155,5 +155,12 @@ neuralNet$methods(
                 li <- li + 1
             }
         }
+    },
+    validationScore = function(ins, outs) {
+        corrects <- 0
+        for (i in 1:nrow(ins)) {
+            corrects <- corrects + as.integer(compute(ins[i,]) == outs[i,])
+        }
+        corrects/nrow(ins)
     }
 )
