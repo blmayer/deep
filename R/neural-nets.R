@@ -67,15 +67,15 @@ neuralNet$methods(
         for (i in 1:...length()) {
             l <- ...elt(i)
             switch (class(l),
-                    "PerceptronLayer" = {
-                        layers[[i]] <<- perceptronLayer(l$n, input)
-                        input <- l$n
-                    },
-                    "McCullochPittsLayer" = {
-                        layers[[i]] <<- mcCullochPittsLayer(l$n, input)
-                        input <- l$n
-                    },
-                    stop("argument in ... is not a layer!")
+                "PerceptronLayer" = {
+                    layers[[i]] <<- perceptronLayer(l$n, input)
+                    input <- l$n
+                },
+                "McCullochPittsLayer" = {
+                    layers[[i]] <<- mcCullochPittsLayer(l$n, input)
+                    input <- l$n
+                },
+                stop("argument in ... is not a layer!")
             )
         }
     },
@@ -134,7 +134,7 @@ neuralNet$methods(
                         ch[[li]][[ni]][["ws"]] <- ch[[li]][[ni]][["ws"]] + d
                         ch[[li]][[ni]][["b"]] <- ch[[li]][[ni]][["b"]] + db
 
-                        newErr <- newErr + err*neu$ws
+                        newErr <- newErr + err[[ni]]*neu$ws
                         ni <- ni + 1
                     }
                     li <- li - 1
