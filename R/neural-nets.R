@@ -88,7 +88,7 @@ neuralNet$methods(
     train = function (ins, outs, epochs = 1, tax = .01, maxErr = 0) {
         nLayers <- length(layers)
         r <- nrow(ins)
-        for (e in 1:epochs) {
+        for (epoch in 1:epochs) {
             # Initialize changes vector
             ch <- vector("list", nLayers)
             ch[[1]] <- vector("list", layers[[1]]$n)
@@ -149,7 +149,7 @@ neuralNet$methods(
                     wsChange <- ch[[li]][[ni]]$ws/r
                     bChange <- ch[[li]][[ni]]$b/r
                     neu$ws <- neu$ws + unlist(wsChange, use.names = F)
-                    neu$bias <- neu$bias + unlist(bChange, use.names = F)
+                    neu$bias <- neu$bias - unlist(bChange, use.names = F)
                     ni <- ni + 1
                 }
                 li <- li + 1
