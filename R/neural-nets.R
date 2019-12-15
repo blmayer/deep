@@ -51,7 +51,7 @@ neuralNet <- setRefClass(
 #' dimentions vary with the first layer in your network.
 #' @return Vector of the outputs of the last layer in your network.
 #'
-#' @method train Run the backpropagation algorithm to train all layers of
+#' @method train Runs the backpropagation algorithm to train all layers of
 #' the network
 #' @param ins The list of vectors of inputs to the first layer in the network
 #' @param outs The list of vectors of outputs of the last layer in the network
@@ -118,7 +118,7 @@ neuralNet$methods(
                 for (l in 1:nLayers) {
                     inputs[[l+1]] <- layers[[l]]$output(inputs[[l]])
                 }
-                cost <- outs[i,] - inputs[[nLayers+1]]
+                cost <- sum(outs[i,] - inputs[[nLayers+1]])
 
                 # Calculate weight changes
                 li <- nLayers
