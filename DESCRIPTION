@@ -11,7 +11,7 @@ Description: This package provides a layer oriented way of creating neural
     package does all the tricky stuff internally leaving you focused in what
     you want. I wrote this package during a neural networks course to help me
     with the problem set.
-License: GPL-3
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
