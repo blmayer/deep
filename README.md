@@ -1,5 +1,7 @@
 # deep
 
+![](http://cranlogs.r-pkg.org/badges/grand-total/deep)
+
 > A small R library for creating deep neural networks.
 
 
