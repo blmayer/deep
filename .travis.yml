@@ -1,3 +1,6 @@
 language: r
 r:
         - release
+
+after_success:
+        - Rscript -e 'covr::coveralls()'
