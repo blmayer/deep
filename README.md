@@ -1,7 +1,8 @@
 # deep
 
-![](http://cranlogs.r-pkg.org/badges/grand-total/deep)
-[![Build Status](https://travis-ci.org/blmayer/deep.svg?branch=master)](https://travis-ci.org/blmayer/deep)
+[![](http://www.r-pkg.org/badges/version/deep)](https://cran.r-project.org/web/packages/deep/index.html)
+[![](http://cranlogs.r-pkg.org/badges/grand-total/deep)](https://cran.r-project.org/web/packages/deep/index.html)
+![](https://travis-ci.org/blmayer/deep.svg?branch=master)
 
 > A small R library for creating deep neural networks.
 
